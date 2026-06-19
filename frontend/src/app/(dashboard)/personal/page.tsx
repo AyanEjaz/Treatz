@@ -159,7 +159,7 @@ export default function PersonalPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {byPerson.map((group) => (
+              {byPerson.map((group: PersonByName) => (
                 <PersonGroup key={group.personName} group={group} />
               ))}
             </div>

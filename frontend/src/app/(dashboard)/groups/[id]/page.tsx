@@ -20,6 +20,7 @@ import { LoanList } from "@/components/loans/LoanList";
 import { GiveLoanForm } from "@/components/loans/GiveLoanForm";
 import { PageLoader } from "@/components/shared/LoadingSpinner";
 import { useGroup, useMyPermissions } from "@/hooks/useGroup";
+import { GroupMember } from "@/types/group.types";
 import { useGroupTreats } from "@/hooks/useTreats";
 import { useGroupExpenses } from "@/hooks/useExpenses";
 import { useGroupLoans } from "@/hooks/useLoans";
@@ -55,7 +56,7 @@ export default function GroupPage() {
   if (loading) return <PageLoader />;
   if (!group) return <div className="text-center py-12 text-muted-foreground">Group not found</div>;
 
-  const currentMember = group.members.find((m) => m.user.id === currentUser?.id);
+  const currentMember = group.members.find((m: GroupMember) => m.user.id === currentUser?.id);
   const isAdmin = currentMember?.role === "ADMIN";
 
   const handleTabChange = (value: string) => {

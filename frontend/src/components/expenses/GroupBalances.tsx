@@ -127,7 +127,7 @@ export function GroupBalances({ groupId }: GroupBalancesProps) {
         <CardTitle className="text-base">Outstanding Balances</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {balances.map((balance, i) => (
+        {balances.map((balance: Balance, i: number) => (
           <BalanceRow
             key={i}
             balance={balance}
