@@ -9,7 +9,7 @@ const MEMBER_FIELDS = `
     id
     name
     avatar
-    email
+    username
   }
 `;
 

@@ -105,17 +105,21 @@ export function ExpenseCard({ expense, groupId, canManage = false }: ExpenseCard
         {expanded && (
           <div className="mt-3 border-t pt-3 space-y-1.5">
             {expense.splits.map((split) => {
-              const net = split.paid - split.owed;
+              const net = Math.round((split.paid - split.owed) * 100) / 100;
               return (
-                <div key={split.id} className="flex items-center justify-between text-xs">
-                  <span className="font-medium">{split.user.name}</span>
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <span>Paid: {formatCurrency(split.paid)}</span>
-                    <span>Share: {formatCurrency(split.owed)}</span>
-                    <span className={net >= 0 ? "text-green-600 dark:text-green-400 font-medium" : "text-red-500 font-medium"}>
-                      {net >= 0 ? `+${formatCurrency(net)}` : formatCurrency(net)}
+                <div key={split.id} className="flex items-center justify-between text-xs gap-2">
+                  <span className="font-medium shrink-0">{split.user.name}</span>
+                  {Math.abs(net) <= 0.5 ? (
+                    <span className="text-muted-foreground">Paid their exact share</span>
+                  ) : net > 0 ? (
+                    <span className="text-green-600 dark:text-green-400 font-medium text-right">
+                      Gets back {formatCurrency(net)}
                     </span>
-                  </div>
+                  ) : (
+                    <span className="text-red-500 font-medium text-right">
+                      Owes {formatCurrency(Math.abs(net))}
+                    </span>
+                  )}
                 </div>
               );
             })}

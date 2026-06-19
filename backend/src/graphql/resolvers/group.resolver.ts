@@ -100,6 +100,17 @@ export const groupResolvers = {
       return true;
     },
 
+    deleteGroup: async (
+      _: unknown,
+      { groupId }: { groupId: string },
+      { prisma, currentUser }: GraphQLContext
+    ) => {
+      const user = requireAuth(currentUser);
+      await requireAdmin(prisma, groupId, user.id);
+      await prisma.group.delete({ where: { id: groupId } });
+      return true;
+    },
+
     grantPermission: async (
       _: unknown,
       { groupId, userId, permission }: { groupId: string; userId: string; permission: string },

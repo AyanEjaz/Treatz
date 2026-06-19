@@ -1,4 +1,4 @@
-import { Gift, Receipt, PiggyBank, Users } from "lucide-react";
+import { Gift, Receipt, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CurrencyDisplay } from "@/components/shared/CurrencyDisplay";
 import { Group } from "@/types/group.types";
@@ -30,17 +30,10 @@ export function GroupStats({ group }: GroupStatsProps) {
       color: "text-blue-500",
       isNumber: false,
     },
-    {
-      label: "Group Fund",
-      value: group.fundTotal,
-      icon: PiggyBank,
-      color: "text-green-500",
-      isNumber: false,
-    },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
       {stats.map(({ label, value, icon: Icon, color, isNumber }) => (
         <Card key={label}>
           <CardContent className="p-4">

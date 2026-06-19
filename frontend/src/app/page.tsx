@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 const CARDS = [
   { emoji: "🎁", label: "Treats",    desc: "Track who owes the next treat", gradient: "from-fuchsia-500/10 to-rose-500/10",    border: "border-fuchsia-500/20" },
   { emoji: "🧾", label: "Expenses",  desc: "Split bills with no drama",     gradient: "from-violet-500/10 to-fuchsia-500/10", border: "border-violet-500/20" },
-  { emoji: "💰", label: "Group Fund",desc: "Pool money for trips & events", gradient: "from-rose-500/10 to-orange-500/10",     border: "border-rose-500/20" },
+  { emoji: "🤝", label: "Udhar",      desc: "Keep track of who lent what",   gradient: "from-rose-500/10 to-orange-500/10",     border: "border-rose-500/20" },
 ];
 
 export default function LandingPage() {

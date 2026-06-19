@@ -6,6 +6,7 @@ import {
   CREATE_GROUP_MUTATION,
   JOIN_GROUP_MUTATION,
   LEAVE_GROUP_MUTATION,
+  DELETE_GROUP_MUTATION,
   GRANT_PERMISSION_MUTATION,
   REVOKE_PERMISSION_MUTATION,
 } from "@/graphql/mutations/group.mutations";
@@ -60,6 +61,14 @@ export function useLeaveGroup() {
   });
   const leaveGroup = (groupId: string) => mutate({ variables: { groupId } });
   return { leaveGroup, loading };
+}
+
+export function useDeleteGroup() {
+  const [mutate, { loading }] = useMutation(DELETE_GROUP_MUTATION, {
+    refetchQueries: [{ query: MY_GROUPS_QUERY }],
+  });
+  const deleteGroup = (groupId: string) => mutate({ variables: { groupId } });
+  return { deleteGroup, loading };
 }
 
 export function useGrantPermission(groupId: string) {

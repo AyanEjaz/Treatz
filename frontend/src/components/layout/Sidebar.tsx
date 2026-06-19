@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import {
-  LayoutDashboard, Users, Receipt, PiggyBank, Gift,
+  LayoutDashboard, Users, Receipt, Gift,
   NotebookPen, Banknote, ChevronLeft, Activity, BarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,6 @@ const GROUP_TABS = (groupId: string) => [
   { tab: "treats", label: "Treats", icon: Gift },
   { tab: "expenses", label: "Bill Split", icon: Receipt },
   { tab: "loans", label: "Udhar", icon: Banknote },
-  { tab: "fund", label: "Fund", icon: PiggyBank },
   { tab: "activity", label: "Activity", icon: Activity },
   { tab: "analytics", label: "Analytics", icon: BarChart2 },
 ];

@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useGrantPermission, useRevokePermission } from "@/hooks/useGroup";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useGrantPermission, useRevokePermission, useDeleteGroup } from "@/hooks/useGroup";
 import { GroupMember, GroupPermission } from "@/types/group.types";
 import { toast } from "sonner";
 
@@ -52,7 +57,9 @@ function MemberRow({ member, groupId }: MemberRowProps) {
         </Avatar>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm truncate">{member.user.name}</p>
-          <p className="text-xs text-muted-foreground truncate">{member.user.email}</p>
+          {member.user.username && (
+            <p className="text-xs text-muted-foreground truncate">@{member.user.username}</p>
+          )}
         </div>
         <Badge variant={isAdmin ? "default" : "secondary"} className="text-xs">
           {member.role}
@@ -86,38 +93,107 @@ function MemberRow({ member, groupId }: MemberRowProps) {
   );
 }
 
+function DeleteGroupSection({ groupId, groupName }: { groupId: string; groupName: string }) {
+  const router = useRouter();
+  const { deleteGroup, loading } = useDeleteGroup();
+  const [open, setOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+
+  const handleDelete = async () => {
+    try {
+      await deleteGroup(groupId);
+      toast.success("Group deleted");
+      router.push("/groups");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete group");
+    }
+  };
+
+  return (
+    <Card className="border-destructive/30">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2 text-destructive">
+          <AlertTriangle className="h-4 w-4" />
+          Danger Zone
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <p className="text-sm text-muted-foreground">
+            Permanently delete this group, including all treats, expenses, loans and history. This cannot be undone.
+          </p>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setConfirmText(""); }}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm" className="shrink-0">Delete Group</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete &quot;{groupName}&quot;?</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  This will permanently delete the group and all its data for every member. Type{" "}
+                  <span className="font-semibold text-foreground">{groupName}</span> to confirm.
+                </p>
+                <Input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={groupName}
+                />
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  disabled={confirmText !== groupName || loading}
+                  onClick={handleDelete}
+                >
+                  {loading ? "Deleting..." : "Permanently Delete"}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 interface MemberPermissionsProps {
   members: GroupMember[];
   groupId: string;
+  groupName: string;
 }
 
-export function MemberPermissions({ members, groupId }: MemberPermissionsProps) {
+export function MemberPermissions({ members, groupId, groupName }: MemberPermissionsProps) {
   const nonAdmins = members.filter((m) => m.role !== "ADMIN");
   const admins = members.filter((m) => m.role === "ADMIN");
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Member Permissions</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {admins.map((m, i) => (
-          <div key={m.user.id}>
-            <MemberRow member={m} groupId={groupId} />
-            {i < admins.length - 1 && <Separator className="mt-4" />}
-          </div>
-        ))}
-        {admins.length > 0 && nonAdmins.length > 0 && <Separator />}
-        {nonAdmins.map((m, i) => (
-          <div key={m.user.id}>
-            <MemberRow member={m} groupId={groupId} />
-            {i < nonAdmins.length - 1 && <Separator className="mt-4" />}
-          </div>
-        ))}
-        {members.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">No members found</p>
-        )}
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Member Permissions</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {admins.map((m, i) => (
+            <div key={m.user.id}>
+              <MemberRow member={m} groupId={groupId} />
+              {i < admins.length - 1 && <Separator className="mt-4" />}
+            </div>
+          ))}
+          {admins.length > 0 && nonAdmins.length > 0 && <Separator />}
+          {nonAdmins.map((m, i) => (
+            <div key={m.user.id}>
+              <MemberRow member={m} groupId={groupId} />
+              {i < nonAdmins.length - 1 && <Separator className="mt-4" />}
+            </div>
+          ))}
+          {members.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">No members found</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <DeleteGroupSection groupId={groupId} groupName={groupName} />
+    </div>
   );
 }

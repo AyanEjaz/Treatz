@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -48,29 +48,25 @@ function BalanceRow({ balance, groupId, isMyDebt }: BalanceRowProps) {
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Avatar className="h-7 w-7 shrink-0">
-            <AvatarImage src={balance.fromUser.avatar ?? undefined} alt={balance.fromUser.name} />
-            <AvatarFallback className="text-xs">{initials(balance.fromUser.name)}</AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-medium truncate">{balance.fromUser.name}</span>
-        </div>
+    <div className="rounded-xl border bg-muted/30 p-3 space-y-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Avatar className="h-7 w-7 shrink-0">
+          <AvatarImage src={balance.fromUser.avatar ?? undefined} alt={balance.fromUser.name} />
+          <AvatarFallback className="text-xs">{initials(balance.fromUser.name)}</AvatarFallback>
+        </Avatar>
+        <span className="text-sm">
+          <span className="font-semibold">{balance.fromUser.name}</span>
+          <span className="text-muted-foreground"> owes </span>
+          <span className="font-semibold">{balance.toUser.name}</span>
+        </span>
+        <Avatar className="h-7 w-7 shrink-0">
+          <AvatarImage src={balance.toUser.avatar ?? undefined} alt={balance.toUser.name} />
+          <AvatarFallback className="text-xs">{initials(balance.toUser.name)}</AvatarFallback>
+        </Avatar>
 
-        <div className="flex items-center gap-1.5 shrink-0 text-muted-foreground">
-          <ArrowRight className="h-3.5 w-3.5" />
-          <span className="text-sm font-semibold text-foreground">{formatCurrency(balance.amount)}</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </div>
-
-        <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
-          <span className="text-sm font-medium truncate">{balance.toUser.name}</span>
-          <Avatar className="h-7 w-7 shrink-0">
-            <AvatarImage src={balance.toUser.avatar ?? undefined} alt={balance.toUser.name} />
-            <AvatarFallback className="text-xs">{initials(balance.toUser.name)}</AvatarFallback>
-          </Avatar>
-        </div>
+        <span className="ml-auto text-base font-bold text-fuchsia-600 dark:text-fuchsia-400">
+          {formatCurrency(balance.amount)}
+        </span>
 
         {isMyDebt && !paying && (
           <Button
@@ -79,13 +75,13 @@ function BalanceRow({ balance, groupId, isMyDebt }: BalanceRowProps) {
             className="h-7 text-xs shrink-0"
             onClick={() => { setAmount(String(balance.amount)); setPaying(true); }}
           >
-            Paid
+            I Paid This
           </Button>
         )}
       </div>
 
       {paying && (
-        <div className="flex items-center gap-2 pl-9">
+        <div className="flex items-center gap-2 pl-2">
           <span className="text-xs text-muted-foreground shrink-0">Amount paid RS</span>
           <Input
             type="number"

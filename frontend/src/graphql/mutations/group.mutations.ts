@@ -38,6 +38,12 @@ export const LEAVE_GROUP_MUTATION = gql`
   }
 `;
 
+export const DELETE_GROUP_MUTATION = gql`
+  mutation DeleteGroup($groupId: ID!) {
+    deleteGroup(groupId: $groupId)
+  }
+`;
+
 export const GRANT_PERMISSION_MUTATION = gql`
   mutation GrantPermission($groupId: ID!, $userId: ID!, $permission: GroupPermission!) {
     grantPermission(groupId: $groupId, userId: $userId, permission: $permission) {

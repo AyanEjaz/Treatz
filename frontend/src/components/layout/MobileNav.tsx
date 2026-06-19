@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, NotebookPen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,10 +12,7 @@ const ITEMS = [
 ];
 
 export function MobileNav() {
-  const params = useParams();
-  const groupId = params?.id as string | undefined;
   const pathname = usePathname();
-  if (groupId) return null;
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-card/95 backdrop-blur-md">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -14,9 +15,6 @@ import { AddTreatForm } from "@/components/treats/AddTreatForm";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
 import { AddExpenseForm } from "@/components/expenses/AddExpenseForm";
 import { GroupBalances } from "@/components/expenses/GroupBalances";
-import { FundBalance } from "@/components/funds/FundBalance";
-import { FundHistory } from "@/components/funds/FundHistory";
-import { ContributeFundForm } from "@/components/funds/ContributeFundForm";
 import { LoanSummary } from "@/components/loans/LoanSummary";
 import { LoanList } from "@/components/loans/LoanList";
 import { GiveLoanForm } from "@/components/loans/GiveLoanForm";
@@ -24,7 +22,6 @@ import { PageLoader } from "@/components/shared/LoadingSpinner";
 import { useGroup, useMyPermissions } from "@/hooks/useGroup";
 import { useGroupTreats } from "@/hooks/useTreats";
 import { useGroupExpenses } from "@/hooks/useExpenses";
-import { useGroupFund } from "@/hooks/useFunds";
 import { useGroupLoans } from "@/hooks/useLoans";
 import { useAuth } from "@/hooks/useAuth";
 import dynamic from "next/dynamic";
@@ -47,14 +44,12 @@ export default function GroupPage() {
   const { group, loading } = useGroup(id);
   const { treats, loading: treatsLoading } = useGroupTreats(id);
   const { expenses, loading: expensesLoading } = useGroupExpenses(id);
-  const { fund, loading: fundLoading } = useGroupFund(id);
   const { loans, loading: loansLoading } = useGroupLoans(id);
   const { currentUser } = useAuth();
   const { can } = useMyPermissions(id);
 
   const [treatOpen, setTreatOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
-  const [fundOpen, setFundOpen] = useState(false);
   const [loanOpen, setLoanOpen] = useState(false);
 
   if (loading) return <PageLoader />;
@@ -69,6 +64,14 @@ export default function GroupPage() {
 
   return (
     <div className="space-y-6">
+      <Link
+        href="/groups"
+        className="md:hidden inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Groups
+      </Link>
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">{group.name}</h1>
@@ -84,7 +87,6 @@ export default function GroupPage() {
           <TabsTrigger value="treats">Treats</TabsTrigger>
           <TabsTrigger value="expenses">Bill Split</TabsTrigger>
           <TabsTrigger value="loans">Udhar</TabsTrigger>
-          <TabsTrigger value="fund">Fund</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           {isAdmin && <TabsTrigger value="permissions">Permissions</TabsTrigger>}
@@ -159,24 +161,6 @@ export default function GroupPage() {
           />
         </TabsContent>
 
-        <TabsContent value="fund" className="mt-4 space-y-4">
-          {!fundLoading && <FundBalance fund={fund} />}
-          {can("CONTRIBUTE_FUND") && (
-            <div className="flex justify-end">
-              <Dialog open={fundOpen} onOpenChange={setFundOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm"><Plus className="h-4 w-4 mr-1" />Contribute</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>Contribute to Fund</DialogTitle></DialogHeader>
-                  <ContributeFundForm groupId={id} onSuccess={() => setFundOpen(false)} />
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
-          <FundHistory contributions={fund.contributions} />
-        </TabsContent>
-
         <TabsContent value="activity" className="mt-4">
           <ActivityFeed groupId={id} />
         </TabsContent>
@@ -187,7 +171,7 @@ export default function GroupPage() {
 
         {isAdmin && (
           <TabsContent value="permissions" className="mt-4">
-            <MemberPermissions members={group.members} groupId={id} />
+            <MemberPermissions members={group.members} groupId={id} groupName={group.name} />
           </TabsContent>
         )}
       </Tabs>

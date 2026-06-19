@@ -43,6 +43,7 @@ export const groupTypeDefs = `#graphql
     createGroup(name: String!, description: String): Group!
     joinGroup(inviteCode: String!): Group!
     leaveGroup(groupId: ID!): Boolean!
+    deleteGroup(groupId: ID!): Boolean!
     grantPermission(groupId: ID!, userId: ID!, permission: GroupPermission!): GroupMember!
     revokePermission(groupId: ID!, userId: ID!, permission: GroupPermission!): GroupMember!
   }
